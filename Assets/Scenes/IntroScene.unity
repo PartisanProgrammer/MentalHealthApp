@@ -1087,6 +1087,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Done panel
       objectReference: {fileID: 0}
+    - target: {fileID: 6100095632534689918, guid: a6017da0d2b327049b4cc292940763b9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: a6017da0d2b327049b4cc292940763b9, type: 3}
@@ -1334,6 +1339,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Recovery mail panel
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420322520220356980, guid: 53e9763c49ea98241ac1c51f5a14c241,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
