@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 [Serializable]
-public class Comment 
+public class Note 
 {
-    public DateTime Date{ get; set; }
+    public Time Time{ get; set; }
     public string Text{ get; set; }
 }
