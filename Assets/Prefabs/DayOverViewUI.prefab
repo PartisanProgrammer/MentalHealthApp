@@ -80,7 +80,7 @@ GameObject:
   - component: {fileID: 6696842292579556466}
   - component: {fileID: 6696842292579556467}
   m_Layer: 5
-  m_Name: DayOverViewPlot
+  m_Name: DayOverViewUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

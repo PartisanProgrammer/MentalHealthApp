@@ -33,7 +33,7 @@ public class Window_Graph : MonoBehaviour
     private RectTransform graphContainer;
     [SerializeField] float iconScale = 4;
     [SerializeField] float xAxisFontSize = 15;
-    [SerializeField] private List<int> valueList = new List<int>(); //TODO:  LOAD HERE
+    [SerializeField] private List<float> valueList = new List<float>(); //TODO:  LOAD HERE
     private List<Vector2> pointLineList = new List<Vector2>();
     private List<Vector2> verticalLineList = new List<Vector2>();   
     private LineRedererController lr => FindObjectOfType<LineRedererController>();
@@ -72,7 +72,7 @@ public class Window_Graph : MonoBehaviour
         return gameObject;
     }
 
-    private void ShowGraph(List<int> valueList) {
+    private void ShowGraph(List<float> valueList) {
         float graphHeight = graphContainer.sizeDelta.y;
 
         for (int i = 0; i < valueList.Count; i++) {
@@ -127,7 +127,7 @@ public class Window_Graph : MonoBehaviour
  
     }
 
-    private Sprite GetSprite(int value)
+    private Sprite GetSprite(float value)
     {
         switch (value)
         {
@@ -145,7 +145,7 @@ public class Window_Graph : MonoBehaviour
 
         return null;
     }
-    private Color GetColor(int value)
+    private Color GetColor(float value)
     {
         switch (value)
         {
