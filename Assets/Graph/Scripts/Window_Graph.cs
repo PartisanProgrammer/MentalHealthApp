@@ -31,7 +31,6 @@ public class Window_Graph : MonoBehaviour {
 
     private void Awake()
     {
- 
         graphContainer =  GetComponent<RectTransform>();
         ShowGraph(valueList);
     }
@@ -51,8 +50,7 @@ public class Window_Graph : MonoBehaviour {
         rectTransform.sizeDelta = new Vector2(11, 11);
         rectTransform.anchorMin = new Vector2(0, 0);
         rectTransform.anchorMax = new Vector2(0, 0);
-        gameObject.transform.position =
-            new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0);
+ 
         
         return gameObject;
     }
@@ -88,9 +86,6 @@ public class Window_Graph : MonoBehaviour {
         var axisLabel = new GameObject($"Label {xPosition}");
         axisLabel.AddComponent<TextMeshProUGUI>();
         axisLabel.transform.SetParent(graphContainer);
-        
-        // LayerMask uILayer = LayerMask.NameToLayer("UI");
-        // axisLabel.layer = uILayer;
         
         var axisLabelText = axisLabel.GetComponent<TMP_Text>(); 
         axisLabelText.horizontalAlignment = HorizontalAlignmentOptions.Center; 
