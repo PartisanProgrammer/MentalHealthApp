@@ -20,11 +20,15 @@ using UnityEngine.UI;
 
 public class Window_Graph : MonoBehaviour {
 
+    [Header("Graph axis scaling")]
+    [SerializeField]float yCompression = 7;
+    [SerializeField] float xCompression = 130;
+    [Header("GFX")]
     [SerializeField] private Sprite[] markerSprite;
     private RectTransform graphContainer;
     [SerializeField] float iconScale = 4;
     [SerializeField] float xAxisFontSize = 15;
-    List<int> valueList = new List<int>() { 1,4,5,4,4,3,5 }; // LOAD
+    [SerializeField] private List<int> valueList = new List<int>(); //TODO:  LOAD HERE
     private List<Vector2> pointLineList = new List<Vector2>();
     private List<Vector2> verticalLineList = new List<Vector2>();
     private LineRedererController lr => FindObjectOfType<LineRedererController>();
@@ -34,6 +38,12 @@ public class Window_Graph : MonoBehaviour {
     {
         graphContainer =  GetComponent<RectTransform>();
         ShowGraph(valueList);
+        
+    }
+
+    private void Start()
+    {
+        lr.SetUpLine(pointLineList.ToArray());
     }
 
     private GameObject CreateCircle(Vector2 anchoredPosition) {
@@ -58,25 +68,18 @@ public class Window_Graph : MonoBehaviour {
 
     private void ShowGraph(List<int> valueList) {
         float graphHeight = graphContainer.sizeDelta.y;
-        float yMaximum = 7;
-        float xSize = 130;
 
         GameObject lastCircleGameObject = null;
         for (int i = 0; i < valueList.Count; i++) {
-            float xPosition = xSize + i * xSize;
-            float yPosition = (valueList[i] / yMaximum) * graphHeight;
+            float xPosition = xCompression + i * xCompression;
+            float yPosition = (valueList[i] / yCompression) * graphHeight;
             GameObject circleGameObject = CreateCircle(new Vector2(xPosition, yPosition));
             
             circleGameObject.GetComponent<Image>().sprite = GetSprite(valueList[i]);
             
             AddLabelsXAxis(xPosition);
             
-            if (lastCircleGameObject != null) {
-               
-                lr.SetUpLine(pointLineList.ToArray());
-                
-            }
-            lastCircleGameObject = circleGameObject;
+            
         }
                     
         
