@@ -25,7 +25,8 @@ public class Window_Graph : MonoBehaviour {
     [SerializeField] float iconScale = 4;
     [SerializeField] float xAxisFontSize = 15;
     List<int> valueList = new List<int>() { 1,4,5,4,4,3,5 }; // LOAD
-    private List<Vector2> lineList = new List<Vector2>();
+    private List<Vector2> pointLineList = new List<Vector2>();
+    private List<Vector2> verticalLineList = new List<Vector2>();
     private LineRedererController lr => FindObjectOfType<LineRedererController>();
 
 
@@ -40,7 +41,7 @@ public class Window_Graph : MonoBehaviour {
         
         gameObject.transform.SetParent(graphContainer, false);
         lr.transform.SetParent(graphContainer, true);
-        lineList.Add(anchoredPosition);
+        pointLineList.Add(anchoredPosition);
         
         gameObject.GetComponent<Image>().sprite = markerSprite[0];
         gameObject.transform.localScale *= iconScale;
@@ -72,7 +73,7 @@ public class Window_Graph : MonoBehaviour {
             
             if (lastCircleGameObject != null) {
                
-                lr.SetUpLine(lineList.ToArray());
+                lr.SetUpLine(pointLineList.ToArray());
                 
             }
             lastCircleGameObject = circleGameObject;
@@ -91,6 +92,7 @@ public class Window_Graph : MonoBehaviour {
         axisLabelText.horizontalAlignment = HorizontalAlignmentOptions.Center; 
         var axisLabelRectTransform = axisLabel.GetComponent<RectTransform>(); 
         axisLabelRectTransform.anchoredPosition = new Vector2(xPosition, 0);
+        verticalLineList.Add(new Vector2(xPosition,0));
         axisLabelRectTransform.anchorMax = new Vector2(0, 0);
         axisLabelRectTransform.anchorMin = new Vector2(0, 0);
 
