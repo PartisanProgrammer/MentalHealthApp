@@ -1,101 +1,151 @@
-﻿/* 
-    ------------------- Code Monkey -------------------
-
-    Thank you for downloading this package
-    I hope you find it useful in your projects
-    If you have any questions let me know
-    Cheers!
-
-               unitycodemonkey.com
-    --------------------------------------------------
- */
-
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
-public class Window_Graph : MonoBehaviour {
+public class Window_Graph : MonoBehaviour
+{
 
+    [SerializeField] private GameObject marker;
+    [Header("Graph axis scaling")]
+    [SerializeField]float yCompression ;
+    [SerializeField] private float xCompression;
+    [SerializeField] private float xAxisLabelYAdjustment = -50;
+    
+    [Header("GFX")]
     [SerializeField] private Sprite[] markerSprite;
     private RectTransform graphContainer;
     [SerializeField] float iconScale = 4;
     [SerializeField] float xAxisFontSize = 15;
+    [SerializeField] private List<float> valueList = new List<float>(); //TODO:  LOAD HERE
+    private List<Vector2> pointLineList = new List<Vector2>();
+    // private List<Vector2> verticalLineList = new List<Vector2>();   
+    private LineRedererController lr => FindObjectOfType<LineRedererController>();
 
 
-
-    private void Awake() {
+    private void Awake()
+    {
         graphContainer =  GetComponent<RectTransform>();
-
-        List<int> valueList = new List<int>() { 1,4,5,4,4,3,5 }; // LOAD
         ShowGraph(valueList);
+        
+    }
+
+    private void Start()
+    {
+        lr.SetUpAndDrawLines(pointLineList.ToArray());
     }
 
     private GameObject CreateCircle(Vector2 anchoredPosition) {
-        GameObject gameObject = new GameObject("circle", typeof(Image));
+        
+        GameObject gameObject = Instantiate(marker,Vector3.zero, Quaternion.identity);
+        
         gameObject.transform.SetParent(graphContainer, false);
+        lr.transform.SetParent(graphContainer, true);
+        pointLineList.Add(anchoredPosition);
         
         gameObject.GetComponent<Image>().sprite = markerSprite[0];
         gameObject.transform.localScale *= iconScale;
+      
         var rectTransform = gameObject.GetComponent<RectTransform>();
         rectTransform.anchoredPosition = anchoredPosition;
         rectTransform.sizeDelta = new Vector2(11, 11);
         rectTransform.anchorMin = new Vector2(0, 0);
         rectTransform.anchorMax = new Vector2(0, 0);
+ 
+        
         return gameObject;
     }
 
-    private void ShowGraph(List<int> valueList) {
+    private void ShowGraph(List<float> valueList) {
         float graphHeight = graphContainer.sizeDelta.y;
-        float yMaximum = 10;
-        float xSize = 130;
 
-        GameObject lastCircleGameObject = null;
         for (int i = 0; i < valueList.Count; i++) {
-            float xPosition = xSize + i * xSize;
-            float yPosition = (valueList[i] / yMaximum) * graphHeight;
-            GameObject circleGameObject = CreateCircle(new Vector2(xPosition, yPosition));
-            circleGameObject.GetComponent<Image>().sprite = GetSprite(valueList[i]);
+            float xPosition = xCompression + i * xCompression;
+            float yPosition = (valueList[i] / yCompression) * graphHeight;
+            GameObject markerGameObject = CreateCircle(new Vector2(xPosition, yPosition));
+
+            var markerImage = markerGameObject.GetComponent<Image>(); 
+            markerImage.sprite = GetSprite(valueList[i]);
+            markerImage.color = GetColor(valueList[i]);
+
             
-            AddLabelsXAxis(xPosition);
-            
-            if (lastCircleGameObject != null) {
-               
-                // CreateDotConnection(lastCircleGameObject.GetComponent<RectTransform>().anchoredPosition, circleGameObject.GetComponent<RectTransform>().anchoredPosition);
-                DrawLine();
-            }
-            lastCircleGameObject = circleGameObject;
+            var axisLabelStringManipulated = SetAxisLabel();
+            AddLabelsXAxis(xPosition, axisLabelStringManipulated);
         }
     }
 
-    private void AddLabelsXAxis(float xPosition)
+    private string SetAxisLabel()
+    {
+        var timeNow = DateTime.Now;
+        string manipulatedTime;
+        if (SceneManager.GetActiveScene().name.Contains("Day"))
+        {
+            manipulatedTime = timeNow.ToShortTimeString();
+        }
+        else if (SceneManager.GetActiveScene().name.Contains("Week"))
+        {
+            manipulatedTime = $"{timeNow.Day}/{timeNow.Month}";
+        }
+        else if (SceneManager.GetActiveScene().name.Contains("Month"))
+        {
+            manipulatedTime = $"Week {ISOWeek.GetWeekOfYear(DateTime.Now)}";
+        }
+        else
+        {
+            
+            manipulatedTime = GetMonthText(timeNow.Month);
+        }
+
+        return manipulatedTime;
+    }
+
+    private void AddLabelsXAxis(float xPosition, string labelText)
     {
         var axisLabel = new GameObject($"Label {xPosition}");
         axisLabel.AddComponent<TextMeshProUGUI>();
         axisLabel.transform.SetParent(graphContainer);
         
-        LayerMask uILayer = LayerMask.NameToLayer("UI");
-        axisLabel.layer = uILayer;
-        
         var axisLabelText = axisLabel.GetComponent<TMP_Text>(); 
         axisLabelText.horizontalAlignment = HorizontalAlignmentOptions.Center; 
         var axisLabelRectTransform = axisLabel.GetComponent<RectTransform>(); 
-        axisLabelRectTransform.anchoredPosition = new Vector2(xPosition, 0);
+        axisLabelRectTransform.anchoredPosition = new Vector2(xPosition, xAxisLabelYAdjustment);
         axisLabelRectTransform.anchorMax = new Vector2(0, 0);
         axisLabelRectTransform.anchorMin = new Vector2(0, 0);
 
-        axisLabelRectTransform.sizeDelta = new Vector2(100, 70);
+        axisLabelRectTransform.sizeDelta = new Vector2(70, 20);
         axisLabelText.fontSize = xAxisFontSize;
+        
         var dateManipulation = DateTime.Now;
-        axisLabelText.SetText($"{dateManipulation.Day}/{dateManipulation.Month}");
+        axisLabelText.SetText(labelText);
 
  
     }
+    
+    private string GetMonthText(int monthIndex)
+    {
+        return monthIndex switch
+        {
+            1 => "Jan",
+            2 => "Feb",
+            3 => "Mar",
+            4 => "Apr",
+            5 => "May",
+            6 => "Jun",
+            7 => "Jul",
+            8 => "Aug",
+            9 => "Sep",
+            10 => "Oct",
+            11 => "Nov",
+            12 => "Dec",
+            _ => "NO MONTH LOL"
+        };
+    }
 
-    private Sprite GetSprite(int value)
+    private Sprite GetSprite(float value)
     {
         switch (value)
         {
@@ -113,32 +163,24 @@ public class Window_Graph : MonoBehaviour {
 
         return null;
     }
-
-    private void CreateDotConnection(Vector2 dotPositionA, Vector2 dotPositionB) {
-        GameObject gameObject = new GameObject("dotConnection", typeof(Image));
-        gameObject.transform.SetParent(graphContainer, false);
-        gameObject.GetComponent<Image>().color = new Color(1,1,1, .5f);
-        RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
-        Vector2 dir = (dotPositionB - dotPositionA).normalized;
-        float distance = Vector2.Distance(dotPositionA, dotPositionB);
-        rectTransform.anchorMin = new Vector2(0, 0);
-        rectTransform.anchorMax = new Vector2(0, 0);
-        rectTransform.sizeDelta = new Vector2(distance, 3f);
-        rectTransform.anchoredPosition = dotPositionA + dir * distance * .5f;
-        rectTransform.localEulerAngles = new Vector3(0, 0, GetAngleFromVectorFloat(dir));
-    }
-
-    private void DrawLine()
+    private Color GetColor(float value)
     {
-        
-    }
-    
-    private float GetAngleFromVectorFloat(Vector3 dir) {
-        dir = dir.normalized;
-        float n = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        if (n < 0) n += 360;
+        switch (value)
+        {
+            case <= 1:
+                return Color.red;
+            case <= 2:
+                return new Color32(255, 150, 0,255);
+            case <= 3:
+                return Color.yellow;
+            case <= 4:
+                return new Color32(51, 204, 51,255);
+            case <= 5:
+                return new Color32(0, 153, 51,255);
+        }
 
-        return n;
+        return Color.magenta;
     }
 
+  
 }
