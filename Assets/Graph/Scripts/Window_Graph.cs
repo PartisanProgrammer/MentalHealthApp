@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -78,9 +79,13 @@ public class Window_Graph : MonoBehaviour
                 manipulatedTime = timeNow.ToShortTimeString();
 
             }
-            else
+            else if(SceneManager.GetActiveScene().name.Contains("Week"))
             {
                 manipulatedTime = $"{timeNow.Day}/{timeNow.Month}";
+            }
+            else
+            {
+                manipulatedTime = $"Week {ISOWeek.GetWeekOfYear(DateTime.Now)}";
             }
             AddLabelsXAxis(xPosition, manipulatedTime);
             
