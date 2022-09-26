@@ -5,6 +5,12 @@ using UnityEngine;
 [Serializable]
 public class Note 
 {
-    public Time Time{ get; set; }
+    public TimeSpan Time{ get; set; }
     public string Text{ get; set; }
+    
+    public Note(string text)
+    {
+        Time = DateTime.Now.TimeOfDay;
+        Text = text;
+    }
 }
