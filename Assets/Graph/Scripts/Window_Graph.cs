@@ -78,6 +78,12 @@ public class Window_Graph : MonoBehaviour
         GameObject gameObject = Instantiate(marker,Vector3.zero, Quaternion.identity);
         
         gameObject.transform.SetParent(graphContainer, false);
+        
+        if (SceneManager.GetActiveScene().name.Contains("Day")) // if on day (=closest zoom) disable button
+        {
+            gameObject.GetComponent<Button>().enabled = false;
+        }
+        
         lr.transform.SetParent(graphContainer, true);
         pointLineList.Add(anchoredPosition);
         
