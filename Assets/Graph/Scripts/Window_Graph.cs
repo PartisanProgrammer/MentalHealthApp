@@ -9,7 +9,6 @@ using UnityEngine.UI;
 
 public class Window_Graph : MonoBehaviour
 {
-
     [SerializeField] private GameObject marker;
     [Header("Graph axis scaling")]
     [SerializeField]float yCompression ;
@@ -21,22 +20,57 @@ public class Window_Graph : MonoBehaviour
     private RectTransform graphContainer;
     [SerializeField] float iconScale = 4;
     [SerializeField] float xAxisFontSize = 15;
-    [SerializeField] private List<float> valueList = new List<float>(); //TODO:  LOAD HERE
-    private List<Vector2> pointLineList = new List<Vector2>();
-    // private List<Vector2> verticalLineList = new List<Vector2>();   
+    [SerializeField] private List<float> valueList = new(); //TODO:  LOAD HERE
+    private List<Vector2> pointLineList = new();
     private LineRedererController lr => FindObjectOfType<LineRedererController>();
+
+
+    //Dataloading
+    JournalController journalController => FindObjectOfType<JournalController>();
+
 
 
     private void Awake()
     {
         graphContainer =  GetComponent<RectTransform>();
-        ShowGraph(valueList);
         
     }
 
     private void Start()
     {
+        CreateValueList();
+        ShowGraph(valueList);
+
         lr.SetUpAndDrawLines(pointLineList.ToArray());
+    }
+
+    private void CreateValueList()
+    {
+        if (SceneManager.GetActiveScene().name.Contains("Day"))
+        {
+            Debug.Log("Currently in Day View");
+            var dayEntries = journalController.journal.TryGetCurrentMonth().TryGetCurrentWeek().TryGetCurrentDay()
+                .JournalEntries;
+
+            foreach (var dayEntry in dayEntries)    
+            {
+                Debug.Log(dayEntry.TimeStamp);
+            }
+        }
+        else if (SceneManager.GetActiveScene().name.Contains("Week"))
+        {
+        
+        }
+        else if (SceneManager.GetActiveScene().name.Contains("Month"))
+        {
+           
+        }
+        else
+        {
+            
+           
+        }
+       
     }
 
     private GameObject CreateCircle(Vector2 anchoredPosition) {
