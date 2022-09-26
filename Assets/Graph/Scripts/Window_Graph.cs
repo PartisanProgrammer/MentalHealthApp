@@ -48,6 +48,9 @@ public class Window_Graph : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().name.Contains("Day"))
         {
+
+            journalController.journal.TryGetCurrentMonth().TryGetCurrentWeek().TryGetCurrentDay()
+                .AddNewEntry(new JournalEntry("Hello", 3.5f, null));
             Debug.Log("Currently in Day View");
             var dayEntries = journalController.journal.TryGetCurrentMonth().TryGetCurrentWeek().TryGetCurrentDay()
                 .JournalEntries;
