@@ -38,7 +38,7 @@ public class Window_Graph : MonoBehaviour
 
     private void Start()
     {
-        CreateValueList();
+        // CreateValueList();
         ShowGraph(valueList);
 
         lr.SetUpAndDrawLines(pointLineList.ToArray());
