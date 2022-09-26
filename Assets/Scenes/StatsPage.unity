@@ -501,6 +501,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: MoodPlot
       objectReference: {fileID: 0}
+    - target: {fileID: 7893977370635663215, guid: e30025c1b74147e4985757f52e66c794,
+        type: 3}
+      propertyPath: xAxisFontSize
+      value: 30
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: e30025c1b74147e4985757f52e66c794, type: 3}
