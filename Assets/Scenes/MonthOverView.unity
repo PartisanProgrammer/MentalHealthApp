@@ -215,6 +215,11 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1970726266609032664, guid: b9897cd5195ebd644a326ed7d17dcab7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4890371066114786237, guid: b9897cd5195ebd644a326ed7d17dcab7,
         type: 3}
       propertyPath: marker

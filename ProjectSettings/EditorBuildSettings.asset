@@ -4,5 +4,17 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/DayOverview.unity
+    guid: 63176570672f5154f905364bd5d1a80e
+  - enabled: 1
+    path: Assets/Scenes/IntroScene.unity
+    guid: 7941847cbaa79c54c98c22699adc3dc9
+  - enabled: 1
+    path: Assets/Scenes/MonthOverView.unity
+    guid: 7ae21bccf281f88499825c6201bd9f02
+  - enabled: 1
+    path: Assets/Scenes/WeekOverView.unity
+    guid: c10344ac781f1c445963176bd771ab66
   m_configObjects: {}
