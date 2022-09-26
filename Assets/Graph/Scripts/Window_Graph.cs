@@ -18,7 +18,8 @@ using UnityEngine.UI;
 
 public class Window_Graph : MonoBehaviour {
 
-    [SerializeField] private Sprite[] circleSprite;
+    [SerializeField] private Sprite[] markerSprite;
+    [SerializeField] private Sprite debugSprite;
     private RectTransform graphContainer;
 
     private void Awake() {
@@ -32,7 +33,7 @@ public class Window_Graph : MonoBehaviour {
         GameObject gameObject = new GameObject("circle", typeof(Image));
         gameObject.transform.SetParent(graphContainer, false);
         
-        gameObject.GetComponent<Image>().sprite = circleSprite[0];
+        gameObject.GetComponent<Image>().sprite = markerSprite[0];
         RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
         rectTransform.anchoredPosition = anchoredPosition;
         rectTransform.sizeDelta = new Vector2(11, 11);
@@ -52,12 +53,28 @@ public class Window_Graph : MonoBehaviour {
             float yPosition = (valueList[i] / yMaximum) * graphHeight;
             GameObject circleGameObject = CreateCircle(new Vector2(xPosition, yPosition));
             circleGameObject.GetComponent<Image>().sprite = GetSprite(valueList[i]);
+            
+            AddLabelsXAxis(xPosition);
+            
             if (lastCircleGameObject != null) {
                
                 // CreateDotConnection(lastCircleGameObject.GetComponent<RectTransform>().anchoredPosition, circleGameObject.GetComponent<RectTransform>().anchoredPosition);
+                DrawLine();
             }
             lastCircleGameObject = circleGameObject;
         }
+    }
+
+    private void AddLabelsXAxis(float xPosition)
+    {
+        var xText = new GameObject($"Text at {xPosition}" , typeof(Image));
+        xText.transform.SetParent(graphContainer);
+        var xTextRectTransform = xText.GetComponent<RectTransform>();
+        xTextRectTransform.anchoredPosition = new Vector2(xPosition, 0);
+        xTextRectTransform.anchorMax = new Vector2(0, 0);
+        xTextRectTransform.anchorMin = new Vector2(0, 0);
+        xTextRectTransform.sizeDelta = new Vector2(11, 11);
+        xText.GetComponent<Image>().sprite = debugSprite;
     }
 
     private Sprite GetSprite(int value)
@@ -65,15 +82,15 @@ public class Window_Graph : MonoBehaviour {
         switch (value)
         {
             case <= 1:
-                return circleSprite[0];
+                return markerSprite[0];
             case <= 2:
-                return circleSprite[1];
+                return markerSprite[1];
             case <= 3:
-                return circleSprite[2];
+                return markerSprite[2];
             case <= 4:
-                return circleSprite[3];
+                return markerSprite[3];
             case <= 5:
-                return circleSprite[4];
+                return markerSprite[4];
         }
 
         return null;
@@ -91,6 +108,11 @@ public class Window_Graph : MonoBehaviour {
         rectTransform.sizeDelta = new Vector2(distance, 3f);
         rectTransform.anchoredPosition = dotPositionA + dir * distance * .5f;
         rectTransform.localEulerAngles = new Vector3(0, 0, GetAngleFromVectorFloat(dir));
+    }
+
+    private void DrawLine()
+    {
+        
     }
     
     private float GetAngleFromVectorFloat(Vector3 dir) {
