@@ -14,15 +14,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
-public class Window_Graph : MonoBehaviour {
+public class Window_Graph : MonoBehaviour
+{
 
+    [SerializeField] private GameObject marker;
     [Header("Graph axis scaling")]
-    [SerializeField]float yCompression = 7;
-    [SerializeField] float xCompression = 130;
+    [SerializeField]float yCompression ;
+    [SerializeField] private float xCompression;
+    
     [Header("GFX")]
     [SerializeField] private Sprite[] markerSprite;
     private RectTransform graphContainer;
@@ -30,7 +35,7 @@ public class Window_Graph : MonoBehaviour {
     [SerializeField] float xAxisFontSize = 15;
     [SerializeField] private List<int> valueList = new List<int>(); //TODO:  LOAD HERE
     private List<Vector2> pointLineList = new List<Vector2>();
-    private List<Vector2> verticalLineList = new List<Vector2>();
+    private List<Vector2> verticalLineList = new List<Vector2>();   
     private LineRedererController lr => FindObjectOfType<LineRedererController>();
 
 
@@ -47,7 +52,8 @@ public class Window_Graph : MonoBehaviour {
     }
 
     private GameObject CreateCircle(Vector2 anchoredPosition) {
-        GameObject gameObject = new GameObject("circle", typeof(Image));
+        
+        GameObject gameObject = Instantiate(marker,Vector3.zero, Quaternion.identity);
         
         gameObject.transform.SetParent(graphContainer, false);
         lr.transform.SetParent(graphContainer, true);
@@ -69,15 +75,28 @@ public class Window_Graph : MonoBehaviour {
     private void ShowGraph(List<int> valueList) {
         float graphHeight = graphContainer.sizeDelta.y;
 
-        GameObject lastCircleGameObject = null;
         for (int i = 0; i < valueList.Count; i++) {
             float xPosition = xCompression + i * xCompression;
             float yPosition = (valueList[i] / yCompression) * graphHeight;
-            GameObject circleGameObject = CreateCircle(new Vector2(xPosition, yPosition));
+            GameObject markerGameObject = CreateCircle(new Vector2(xPosition, yPosition));
+
+            var markerImage = markerGameObject.GetComponent<Image>(); 
+            markerImage.sprite = GetSprite(valueList[i]);
+            markerImage.color = GetColor(valueList[i]);
+
             
-            circleGameObject.GetComponent<Image>().sprite = GetSprite(valueList[i]);
-            
-            AddLabelsXAxis(xPosition);
+            var timeNow = DateTime.Now;
+            string manipulatedTime ="";
+            if (SceneManager.GetActiveScene().name.Contains("Day"))
+            {
+                manipulatedTime = timeNow.ToShortTimeString();
+
+            }
+            else
+            {
+                manipulatedTime = $"{timeNow.Day}/{timeNow.Month}";
+            }
+            AddLabelsXAxis(xPosition, manipulatedTime);
             
             
         }
@@ -85,7 +104,7 @@ public class Window_Graph : MonoBehaviour {
         
     }
 
-    private void AddLabelsXAxis(float xPosition)
+    private void AddLabelsXAxis(float xPosition, string labelText)
     {
         var axisLabel = new GameObject($"Label {xPosition}");
         axisLabel.AddComponent<TextMeshProUGUI>();
@@ -99,11 +118,11 @@ public class Window_Graph : MonoBehaviour {
         axisLabelRectTransform.anchorMax = new Vector2(0, 0);
         axisLabelRectTransform.anchorMin = new Vector2(0, 0);
 
-        axisLabelRectTransform.sizeDelta = new Vector2(30, 20);
+        axisLabelRectTransform.sizeDelta = new Vector2(70, 20);
         axisLabelText.fontSize = xAxisFontSize;
         
         var dateManipulation = DateTime.Now;
-        axisLabelText.SetText($"{dateManipulation.Day}/{dateManipulation.Month}");
+        axisLabelText.SetText(labelText);
 
  
     }
@@ -125,5 +144,23 @@ public class Window_Graph : MonoBehaviour {
         }
 
         return null;
+    }
+    private Color GetColor(int value)
+    {
+        switch (value)
+        {
+            case <= 1:
+                return Color.red;
+            case <= 2:
+                return new Color32(255, 150, 0,255);
+            case <= 3:
+                return Color.yellow;
+            case <= 4:
+                return new Color32(51, 204, 51,255);
+            case <= 5:
+                return new Color32(0, 153, 51,255);
+        }
+
+        return Color.magenta;
     }
 }
