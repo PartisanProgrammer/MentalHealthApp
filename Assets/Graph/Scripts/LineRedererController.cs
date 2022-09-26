@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LineRedererController : MonoBehaviour
@@ -14,7 +11,7 @@ public class LineRedererController : MonoBehaviour
     }
 
 
-    public void SetUpLine(Vector2[] points)
+    public void SetUpAndDrawLines(Vector2[] points)
     {
         lr.positionCount = points.Length;
         this.points = points;

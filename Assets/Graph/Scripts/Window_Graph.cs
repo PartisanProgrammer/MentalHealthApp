@@ -1,20 +1,6 @@
-﻿/* 
-    ------------------- Code Monkey -------------------
-
-    Thank you for downloading this package
-    I hope you find it useful in your projects
-    If you have any questions let me know
-    Cheers!
-
-               unitycodemonkey.com
-    --------------------------------------------------
- */
-
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -48,7 +34,7 @@ public class Window_Graph : MonoBehaviour
 
     private void Start()
     {
-        lr.SetUpLine(pointLineList.ToArray());
+        lr.SetUpAndDrawLines(pointLineList.ToArray());
     }
 
     private GameObject CreateCircle(Vector2 anchoredPosition) {
