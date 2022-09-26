@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/WeekOverView.unity
     guid: c10344ac781f1c445963176bd771ab66
+  - enabled: 1
+    path: Assets/Scenes/YearOverView.unity
+    guid: 95fc2c93f0d08bf459c30ec0534dc79e
   m_configObjects: {}

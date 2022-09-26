@@ -14,6 +14,7 @@ public class Window_Graph : MonoBehaviour
     [Header("Graph axis scaling")]
     [SerializeField]float yCompression ;
     [SerializeField] private float xCompression;
+    [SerializeField] private float xAxisLabelYAdjustment = -50;
     
     [Header("GFX")]
     [SerializeField] private Sprite[] markerSprite;
@@ -22,7 +23,7 @@ public class Window_Graph : MonoBehaviour
     [SerializeField] float xAxisFontSize = 15;
     [SerializeField] private List<float> valueList = new List<float>(); //TODO:  LOAD HERE
     private List<Vector2> pointLineList = new List<Vector2>();
-    private List<Vector2> verticalLineList = new List<Vector2>();   
+    // private List<Vector2> verticalLineList = new List<Vector2>();   
     private LineRedererController lr => FindObjectOfType<LineRedererController>();
 
 
@@ -72,27 +73,34 @@ public class Window_Graph : MonoBehaviour
             markerImage.color = GetColor(valueList[i]);
 
             
-            var timeNow = DateTime.Now;
-            string manipulatedTime ="";
-            if (SceneManager.GetActiveScene().name.Contains("Day"))
-            {
-                manipulatedTime = timeNow.ToShortTimeString();
-
-            }
-            else if(SceneManager.GetActiveScene().name.Contains("Week"))
-            {
-                manipulatedTime = $"{timeNow.Day}/{timeNow.Month}";
-            }
-            else
-            {
-                manipulatedTime = $"Week {ISOWeek.GetWeekOfYear(DateTime.Now)}";
-            }
-            AddLabelsXAxis(xPosition, manipulatedTime);
-            
-            
+            var axisLabelStringManipulated = SetAxisLabel();
+            AddLabelsXAxis(xPosition, axisLabelStringManipulated);
         }
-                    
-        
+    }
+
+    private string SetAxisLabel()
+    {
+        var timeNow = DateTime.Now;
+        string manipulatedTime;
+        if (SceneManager.GetActiveScene().name.Contains("Day"))
+        {
+            manipulatedTime = timeNow.ToShortTimeString();
+        }
+        else if (SceneManager.GetActiveScene().name.Contains("Week"))
+        {
+            manipulatedTime = $"{timeNow.Day}/{timeNow.Month}";
+        }
+        else if (SceneManager.GetActiveScene().name.Contains("Month"))
+        {
+            manipulatedTime = $"Week {ISOWeek.GetWeekOfYear(DateTime.Now)}";
+        }
+        else
+        {
+            
+            manipulatedTime = GetMonthText(timeNow.Month);
+        }
+
+        return manipulatedTime;
     }
 
     private void AddLabelsXAxis(float xPosition, string labelText)
@@ -104,8 +112,7 @@ public class Window_Graph : MonoBehaviour
         var axisLabelText = axisLabel.GetComponent<TMP_Text>(); 
         axisLabelText.horizontalAlignment = HorizontalAlignmentOptions.Center; 
         var axisLabelRectTransform = axisLabel.GetComponent<RectTransform>(); 
-        axisLabelRectTransform.anchoredPosition = new Vector2(xPosition, 0);
-        verticalLineList.Add(new Vector2(xPosition,0));
+        axisLabelRectTransform.anchoredPosition = new Vector2(xPosition, xAxisLabelYAdjustment);
         axisLabelRectTransform.anchorMax = new Vector2(0, 0);
         axisLabelRectTransform.anchorMin = new Vector2(0, 0);
 
@@ -116,6 +123,26 @@ public class Window_Graph : MonoBehaviour
         axisLabelText.SetText(labelText);
 
  
+    }
+    
+    private string GetMonthText(int monthIndex)
+    {
+        return monthIndex switch
+        {
+            1 => "Jan",
+            2 => "Feb",
+            3 => "Mar",
+            4 => "Apr",
+            5 => "May",
+            6 => "Jun",
+            7 => "Jul",
+            8 => "Aug",
+            9 => "Sep",
+            10 => "Oct",
+            11 => "Nov",
+            12 => "Dec",
+            _ => "NO MONTH LOL"
+        };
     }
 
     private Sprite GetSprite(float value)
@@ -154,4 +181,6 @@ public class Window_Graph : MonoBehaviour
 
         return Color.magenta;
     }
+
+  
 }
