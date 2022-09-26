@@ -24,27 +24,36 @@ public class Window_Graph : MonoBehaviour {
     private RectTransform graphContainer;
     [SerializeField] float iconScale = 4;
     [SerializeField] float xAxisFontSize = 15;
+    List<int> valueList = new List<int>() { 1,4,5,4,4,3,5 }; // LOAD
+    private List<Vector2> lineList = new List<Vector2>();
+    private LineRedererController lr => FindObjectOfType<LineRedererController>();
 
 
-
-    private void Awake() {
+    private void Awake()
+    {
+ 
         graphContainer =  GetComponent<RectTransform>();
-
-        List<int> valueList = new List<int>() { 1,4,5,4,4,3,5 }; // LOAD
         ShowGraph(valueList);
     }
 
     private GameObject CreateCircle(Vector2 anchoredPosition) {
         GameObject gameObject = new GameObject("circle", typeof(Image));
+        
         gameObject.transform.SetParent(graphContainer, false);
+        lr.transform.SetParent(graphContainer, true);
+        lineList.Add(anchoredPosition);
         
         gameObject.GetComponent<Image>().sprite = markerSprite[0];
         gameObject.transform.localScale *= iconScale;
+      
         var rectTransform = gameObject.GetComponent<RectTransform>();
         rectTransform.anchoredPosition = anchoredPosition;
         rectTransform.sizeDelta = new Vector2(11, 11);
         rectTransform.anchorMin = new Vector2(0, 0);
         rectTransform.anchorMax = new Vector2(0, 0);
+        gameObject.transform.position =
+            new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0);
+        
         return gameObject;
     }
 
@@ -58,17 +67,20 @@ public class Window_Graph : MonoBehaviour {
             float xPosition = xSize + i * xSize;
             float yPosition = (valueList[i] / yMaximum) * graphHeight;
             GameObject circleGameObject = CreateCircle(new Vector2(xPosition, yPosition));
+            
             circleGameObject.GetComponent<Image>().sprite = GetSprite(valueList[i]);
             
             AddLabelsXAxis(xPosition);
             
             if (lastCircleGameObject != null) {
                
-                // CreateDotConnection(lastCircleGameObject.GetComponent<RectTransform>().anchoredPosition, circleGameObject.GetComponent<RectTransform>().anchoredPosition);
-                DrawLine();
+                lr.SetUpLine(lineList.ToArray());
+                
             }
             lastCircleGameObject = circleGameObject;
         }
+                    
+        
     }
 
     private void AddLabelsXAxis(float xPosition)
@@ -77,8 +89,8 @@ public class Window_Graph : MonoBehaviour {
         axisLabel.AddComponent<TextMeshProUGUI>();
         axisLabel.transform.SetParent(graphContainer);
         
-        LayerMask uILayer = LayerMask.NameToLayer("UI");
-        axisLabel.layer = uILayer;
+        // LayerMask uILayer = LayerMask.NameToLayer("UI");
+        // axisLabel.layer = uILayer;
         
         var axisLabelText = axisLabel.GetComponent<TMP_Text>(); 
         axisLabelText.horizontalAlignment = HorizontalAlignmentOptions.Center; 
@@ -87,8 +99,9 @@ public class Window_Graph : MonoBehaviour {
         axisLabelRectTransform.anchorMax = new Vector2(0, 0);
         axisLabelRectTransform.anchorMin = new Vector2(0, 0);
 
-        axisLabelRectTransform.sizeDelta = new Vector2(100, 70);
+        axisLabelRectTransform.sizeDelta = new Vector2(30, 20);
         axisLabelText.fontSize = xAxisFontSize;
+        
         var dateManipulation = DateTime.Now;
         axisLabelText.SetText($"{dateManipulation.Day}/{dateManipulation.Month}");
 
@@ -113,32 +126,4 @@ public class Window_Graph : MonoBehaviour {
 
         return null;
     }
-
-    private void CreateDotConnection(Vector2 dotPositionA, Vector2 dotPositionB) {
-        GameObject gameObject = new GameObject("dotConnection", typeof(Image));
-        gameObject.transform.SetParent(graphContainer, false);
-        gameObject.GetComponent<Image>().color = new Color(1,1,1, .5f);
-        RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
-        Vector2 dir = (dotPositionB - dotPositionA).normalized;
-        float distance = Vector2.Distance(dotPositionA, dotPositionB);
-        rectTransform.anchorMin = new Vector2(0, 0);
-        rectTransform.anchorMax = new Vector2(0, 0);
-        rectTransform.sizeDelta = new Vector2(distance, 3f);
-        rectTransform.anchoredPosition = dotPositionA + dir * distance * .5f;
-        rectTransform.localEulerAngles = new Vector3(0, 0, GetAngleFromVectorFloat(dir));
-    }
-
-    private void DrawLine()
-    {
-        
-    }
-    
-    private float GetAngleFromVectorFloat(Vector3 dir) {
-        dir = dir.normalized;
-        float n = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        if (n < 0) n += 360;
-
-        return n;
-    }
-
 }
