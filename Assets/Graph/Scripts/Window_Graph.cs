@@ -13,19 +13,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 public class Window_Graph : MonoBehaviour {
 
     [SerializeField] private Sprite[] markerSprite;
-    [SerializeField] private Sprite debugSprite;
     private RectTransform graphContainer;
+    [SerializeField] float iconScale = 4;
+    [SerializeField] float xAxisFontSize = 15;
+
+
 
     private void Awake() {
         graphContainer =  GetComponent<RectTransform>();
 
-        List<int> valueList = new List<int>() { 1,4,5,4,4,3,5 }; // 
+        List<int> valueList = new List<int>() { 1,4,5,4,4,3,5 }; // LOAD
         ShowGraph(valueList);
     }
 
@@ -34,7 +39,8 @@ public class Window_Graph : MonoBehaviour {
         gameObject.transform.SetParent(graphContainer, false);
         
         gameObject.GetComponent<Image>().sprite = markerSprite[0];
-        RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
+        gameObject.transform.localScale *= iconScale;
+        var rectTransform = gameObject.GetComponent<RectTransform>();
         rectTransform.anchoredPosition = anchoredPosition;
         rectTransform.sizeDelta = new Vector2(11, 11);
         rectTransform.anchorMin = new Vector2(0, 0);
@@ -67,14 +73,26 @@ public class Window_Graph : MonoBehaviour {
 
     private void AddLabelsXAxis(float xPosition)
     {
-        var xText = new GameObject($"Text at {xPosition}" , typeof(Image));
-        xText.transform.SetParent(graphContainer);
-        var xTextRectTransform = xText.GetComponent<RectTransform>();
-        xTextRectTransform.anchoredPosition = new Vector2(xPosition, 0);
-        xTextRectTransform.anchorMax = new Vector2(0, 0);
-        xTextRectTransform.anchorMin = new Vector2(0, 0);
-        xTextRectTransform.sizeDelta = new Vector2(11, 11);
-        xText.GetComponent<Image>().sprite = debugSprite;
+        var axisLabel = new GameObject($"Label {xPosition}");
+        axisLabel.AddComponent<TextMeshProUGUI>();
+        axisLabel.transform.SetParent(graphContainer);
+        
+        LayerMask uILayer = LayerMask.NameToLayer("UI");
+        axisLabel.layer = uILayer;
+        
+        var axisLabelText = axisLabel.GetComponent<TMP_Text>(); 
+        axisLabelText.horizontalAlignment = HorizontalAlignmentOptions.Center; 
+        var axisLabelRectTransform = axisLabel.GetComponent<RectTransform>(); 
+        axisLabelRectTransform.anchoredPosition = new Vector2(xPosition, 0);
+        axisLabelRectTransform.anchorMax = new Vector2(0, 0);
+        axisLabelRectTransform.anchorMin = new Vector2(0, 0);
+
+        axisLabelRectTransform.sizeDelta = new Vector2(100, 70);
+        axisLabelText.fontSize = xAxisFontSize;
+        var dateManipulation = DateTime.Now;
+        axisLabelText.SetText($"{dateManipulation.Day}/{dateManipulation.Month}");
+
+ 
     }
 
     private Sprite GetSprite(int value)
